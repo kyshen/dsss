@@ -11,4 +11,3 @@ end
 stem(a)
 gold=Goldcode(m1,m2);
 blcd=BalancedGoldcode(C1,C2);
-;;

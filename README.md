@@ -10,35 +10,64 @@ MATLAB实现
 ③仿真时需注意发射端的伪码序列与接收端的伪码序列需保持不同步，通过②的
 实现，完成伪码的同步。
 
-#### 软件架构
-软件架构说明
+#### 功能
 
+##### PNcode.m
 
-#### 安装教程
+作用：用于产生m序列
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+输入：n位初始化寄存器reg，n+1位本原多项式系数polynomial（matlab函数gfprimfd可以求取）
 
-#### 使用说明
+输出：一个长度为2^n-1的m序列（伪随机序列）
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+实现方法：输出+反馈+移位+........
 
-#### 参与贡献
+##### polynomial4bestm.m
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+作用：寻找n阶优选对所对应的本原多项式 
 
+输入：阶数n
 
-#### 特技
+输出：两个本原多项式系数
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+实现方法：同一阶数n对应多个本原多项式，遍历它们，不重复地选取其中两个，使用PNcode产生一对m序列，对这对m序列求相关函数，如果该相关函数满足优选对的要求，返回对应的两个本原多项式，否则继续遍历，直到满足
+
+##### rela.m
+
+作用：求两个等长序列的相关值
+
+输入：两个 m序列，m1,m2
+
+输出：相关值r
+
+实现方法：两序列一致的数目（A）减去不一致的数目（D）
+
+##### dec2Binvector.m
+
+作用：十进制数转化为二进制数组
+
+输入：一个大于0的十进制数
+
+输出：对应的二进制数组
+
+实现方法：（略）
+
+##### Goldcode.m
+
+作用：产生gold码
+
+输入：两个长度相等的m序列优选对
+
+输出：gold码
+
+实现方法：异或运算，logic转换为double
+
+##### BalancedGoldcode.m
+
+作用：获取平衡gold码
+
+输入：优选对所对应的本原多项式
+
+输出：平衡gold码
+
+实现方法：不同的m序列的初始寄存器，对应不同的gold码。遍历寄存器的初始化方式，产生gold码，如果该gold码满足平衡gold码的条件（counter4one-counter4zero==1），返回此时的gold码

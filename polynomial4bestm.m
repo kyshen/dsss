@@ -1,5 +1,5 @@
-function [polynomial1,polynomial2] = bestm(n)
-%BESTM  寻找n阶优选对所对应的本原多项式
+function [polynomial1,polynomial2] = polynomial4bestm(n)
+%polynomial4bestm  寻找n阶优选对所对应的本原多项式
 %   n代表阶数
 if mod(n,2)==1
     % n为奇数
