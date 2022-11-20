@@ -15,3 +15,4 @@ ca1=CAcode([3,8]);
 ca2=CAcode([2,4]);
 [R,n]=relativity(ca1,ca1);
 stem(n,R)
+v=5;
