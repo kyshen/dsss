@@ -12,6 +12,4 @@ clear,clc
 % gold=Goldcode(m1,m2);
 % blcd=BalancedGoldcode(C1,C2);
 ca1=CAcode([3,8]);
-ca2=CAcode([2,4]);
-[R,n]=relativity(ca1,ca1);
-stem(n,R)
+ca2=CAcode([2])

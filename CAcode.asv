@@ -12,4 +12,6 @@ for i=1:1023
     G1=[feedback1,G1(1:9)];
     G2=[feedback2,G2(1:9)];
 end
+
 end
+
