@@ -1,0 +1,17 @@
+clear,clc
+N=1023; % 码长
+f=1.023e6; % 码速率
+T=1/f;
+fs=5e6; % 抽样速率
+Ts=1/fs;
+time=0.01; % 采样时间
+CAcode_length=fs*time;
+ca=CAcodeGenerator([3,8]);
+CAcode=zeros(1,time*fs);
+for i=1:length(CAcode)
+    k=mod(((i-1)*Ts/T+1),N); % 抽样点位于第k个ca
+    if (~k)
+        k=1;
+    end
+    CAcode(i)=ca(k);
+end

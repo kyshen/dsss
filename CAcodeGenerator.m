@@ -1,5 +1,5 @@
-function ca = CAcode(choose)
-%CACODE 产生C/A码
+function ca = CAcodeGenerator(choose)
+%CACODE Generator 产生C/A码
 %   输入二维的相位选择向量choose(G2寄存器需要选择特定相位出来模二相加)
 %   输出对应的ca码
 G1=ones(1,10);
