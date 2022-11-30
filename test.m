@@ -13,6 +13,7 @@ clear,clc
 % blcd=BalancedGoldcode(C1,C2);
 ca1=CAcode([3,8]);
 ca2=CAcode([2,4]);
+shifted_ca1=circshift(ca1,341);
 [R,n]=relativity(ca1,ca1);
 stem(n,R)
-v=10;
+v=2.5;
