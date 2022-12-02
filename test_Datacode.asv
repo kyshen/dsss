@@ -1,0 +1,6 @@
+data=sign(rand(1,data_length)-0.5); % 信息码，正负1
+Datacode=sample(data,RB,fs,time);
+ca=CAcodeGenerator([3,8]);
+CAcode=sample(ca,f_ca,fs,time);
+
+s0=Datacode.*cos(2*pi*fc*t); % 
