@@ -5,7 +5,6 @@ clc;
 time=1e-4; %取0.1ms时间内的信号
 fs=102.3e6;
 Ts=1/fs;%每隔Ts时间采样一个点，总采样点数为：t/Ts
-
 %% 产生信息码元
 Ra=10e3;%信息码元速率10KHz
 Ta=1/Ra;%每bit信息码元占用的时间
@@ -58,7 +57,7 @@ axis([0 length(k_code) -1.5 1.5])
 title('扩频信号')
 
 %% 调制
-f0=40e6; fd=10e3;
+f0=40e6; fd=10e3;%多普勒频偏定为10KHz
 AI=2;
 dt=fs/f0;
 t=0:Ts:time-Ts;%一个载波周期内采样点
@@ -75,7 +74,6 @@ SNR = -20;%dB
 %SNR = 0;%dB
 signal_Receive = awgn(signal,SNR);
 
-%fd = 10e3;%多普勒频偏定为10KHz
 R_2D = [];%存放 频带*码带的二维自相关结果
 fd_axis=[]; %生成二维坐标对应值
 for fd_guess = -10e4:fd/10:10e4 %以fd/10=1KHz为频率搜索步进，共搜索40次
