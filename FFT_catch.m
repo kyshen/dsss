@@ -18,4 +18,4 @@ CAcode_shift_axis=0:N-1;
 %title('捕获过程获得的自相关峰值')
 [x,y]=find(R_2D==max(max(R_2D)));
 catched_fd=fd_search_range(x); % 
-catched_CAcode_shift=CAcode_shift_axis(y)*(1/fs)/(1/f_ca);
+catched_CAcode_shift=1023-CAcode_shift_axis(y)*(1/fs)/(1/f_ca);

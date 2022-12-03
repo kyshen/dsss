@@ -1,32 +1,30 @@
-clear,clc
 %% 构造数字基带信号
-%L=10000;
-L=1000000;
-I_Data=(randi(2,L,1)-2)*2+1; 
-Q_Data=zeros(L,1,1);
+I_Data=(randi(2,N,1)-2)*2+1; 
+Q_Data=zeros(N,1,1);
 Signal_Source=I_Data + 1j*Q_Data; 
 %% 载波信号 
-Freq_Sample=511.5e6;                       %采样率，Hz 
-Delta_Freq=157.542e6;                          %载波频率 
+Freq_Sample=fs;                       %采样率，Hz 
+Delta_Freq=fc+fd;                       %载波频率 
 Time_Sample=1/Freq_Sample;              %采样间隔
-Delta_Phase=rand(1)*2*pi;               %随机初相，rad 
-Carrier=exp(1j*(Delta_Freq*Time_Sample*(1:L)+Delta_Phase));      %构造载波信号
+%Delta_Phase=rand(1)*2*pi;               %随机初相，rad
+Delta_Phase = 0;
+Carrier=A*exp(1j*(Delta_Freq*Time_Sample*(1:N)+Delta_Phase));      %构造载波信号
 %% 调制处理 
 Signal_Channel=Signal_Source.*Carrier'; 
 %% 参数清零及初始化
-Signal_PLL=zeros(L,1);                  %锁相环锁定及稳定后的数据
-NCO_Phase = zeros(L,1);                 %锁定的相位
-Discriminator_Out=zeros(L,1);           %鉴相器输出
-Freq_Control=zeros(L,1);                %频率控制
-PLL_Phase_Part=zeros(L,1);              %锁相环相位响应函数
-PLL_Freq_Part=zeros(L,1);               %锁相环频率响应函数
-I_PLL = zeros(L,1); 
-Q_PLL = zeros(L,1); 
+Signal_PLL=zeros(N,1);                  %锁相环锁定及稳定后的数据
+NCO_Phase = zeros(N,1);                 %锁定的相位
+Discriminator_Out=zeros(N,1);           %鉴相器输出
+Freq_Control=zeros(N,1);                %频率控制
+PLL_Phase_Part=zeros(N,1);              %锁相环相位响应函数
+PLL_Freq_Part=zeros(N,1);               %锁相环频率响应函数
+I_PLL = zeros(N,1); 
+Q_PLL = zeros(N,1); 
 %环路处理 
 C1=0.022013;                    %环路滤波器系数C1
 C2=0.00024722;                  %环路滤波器系数C2 
 %% 锁相环处理过程
-for i=2:L 
+for i=2:N 
     Signal_PLL(i)=Signal_Channel(i)*exp(-1j*mod(NCO_Phase(i-1),2*pi));   %得到环路滤波器前的相乘器的输入
     I_PLL(i)=real(Signal_PLL(i));                                       %环路滤波器前的相乘器的I路输入信息数据
     Q_PLL(i)=imag(Signal_PLL(i));                                       %环路滤波器前的相乘器的Q路输入信息数据
@@ -38,10 +36,10 @@ for i=2:L
 end
 
 %% 可视化
-plot(cos(NCO_Phase),'b');grid on        %锁相环提取的载波
-hold on 
-plot(real(Carrier),'r')                     %发射载波
-legend('锁相环提取的载波','发射载波')
+% plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
+% hold on 
+% plot(real(Carrier),'b')                     %发射载波
+% legend('锁相环提取的载波','发射载波')
 
 % Show_D=300; %起始位置 
 % Show_U=900; %终止位置
