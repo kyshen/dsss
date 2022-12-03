@@ -7,8 +7,8 @@ ca=CAcodeGenerator([3,8]);
 ca_shift=circshift(ca,CA_shift);
 ca=2*ca-1;
 ca_shift=2*ca_shift-1;
-CAcode_T=sample(ca,f_ca,fs,time); % 发送端C/A码
-CAcode_R=sample(ca_shift,f_ca,fs,time); % 接收端C/A码
+CAcode_T=sample(ca_shift,f_ca,fs,time); % 发送端C/A码
+CAcode_R=sample(ca,f_ca,fs,time); % 接收端C/A码
 carrier_T=A*cos(2*pi*(fc+fd)*t); % 载波
 carrier_R=2*A*cos(2*pi*fc*t); % 载波
 

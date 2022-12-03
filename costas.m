@@ -1,124 +1,63 @@
-clc; clear; close all; 
-%close all; 
-%定义锁相环的工作模式：单载波为“1”、BPSK调制为“2”、QPSK调制为“3” 
-PLL_Mode = 3; 
-%仿真数据长度 
-L=10000; 
-%基带信号 
-if PLL_Mode == 1 
-    I_Data=ones(L,1); 
-    Q_Data=I_Data; 
-else if PLL_Mode == 2 
-    I_Data=(randi(2,L,1)-2)*2+1; 
-    Q_Data=zeros(1,L,1); 
-    else 
-    I_Data=(randi(2,L,1)-2)*2+1; 
-    Q_Data=(randi(2,L,1)-2)*2+1; 
-    end 
-end 
-Signal_Source=I_Data + 1i*Q_Data; 
-
-%载波信号 
-Freq_Sample=2400;%采样率，Hz 
-Delta_Freq=-60; %频偏，Hz 
-Time_Sample=1/Freq_Sample; 
-Delta_Phase=rand(1)*2*pi; %随机初相，Rad 
-Carrier=exp(1i*(Delta_Freq/Freq_Sample*(1:L)+Delta_Phase)); 
-%调制处理 
+clear,clc
+%% 构造数字基带信号
+L=10000;
+I_Data=(randi(2,L,1)-2)*2+1; 
+Q_Data=zeros(L,1,1);
+Signal_Source=I_Data + 1j*Q_Data; 
+%% 载波信号 
+Freq_Sample=2400;                       %采样率，Hz 
+Delta_Freq=60;                          %载波频率 
+Time_Sample=1/Freq_Sample;              %采样间隔
+Delta_Phase=rand(1)*2*pi;               %随机初相，rad 
+Carrier=exp(1j*(Delta_Freq*Time_Sample*(1:L)+Delta_Phase));      %构造载波信号
+%% 调制处理 
 Signal_Channel=Signal_Source.*Carrier'; 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%以下为锁相环处理过程 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%参数清零 
-Signal_PLL=zeros(L,1); 
-NCO_Phase = zeros(L,1); 
-Discriminator_Out=zeros(L,1); 
-Freq_Control=zeros(L,1); 
-PLL_Phase_Part=zeros(L,1); 
-PLL_Freq_Part=zeros(L,1); 
-
+%% 参数清零及初始化
+Signal_PLL=zeros(L,1);                  %锁相环锁定及稳定后的数据
+NCO_Phase = zeros(L,1);                 %锁定的相位
+Discriminator_Out=zeros(L,1);           %鉴相器输出
+Freq_Control=zeros(L,1);                %频率控制
+PLL_Phase_Part=zeros(L,1);              %锁相环相位响应函数
+PLL_Freq_Part=zeros(L,1);               %锁相环频率响应函数
 I_PLL = zeros(L,1); 
 Q_PLL = zeros(L,1); 
 %环路处理 
-C1=0.022013; 
-C2=0.00024722; 
+C1=0.022013;                    %环路滤波器系数C1
+C2=0.00024722;                  %环路滤波器系数C2 
+%% 锁相环处理过程
 for i=2:L 
-    Signal_PLL(i)=Signal_Channel(i)*exp(-1i*mod(NCO_Phase(i-1),2*pi)); 
-    I_PLL(i)=real(Signal_PLL(i)); 
-    Q_PLL(i)=imag(Signal_PLL(i)); 
-    if PLL_Mode == 1 
-        Discriminator_Out(i)=atan2(Q_PLL(i),I_PLL(i)); 
-    else if PLL_Mode == 2 
-        Discriminator_Out(i)=sign(I_PLL(i))*Q_PLL(i)/abs(Signal_PLL(i)); 
-        else 
-            Discriminator_Out(i)=(sign(I_PLL(i))*Q_PLL(i)-sign(Q_PLL(i))*I_PLL(i))... 
-            /(sqrt(2)*abs(Signal_PLL(i))); 
-        end 
-    end 
-    PLL_Phase_Part(i)=Discriminator_Out(i)*C1; 
-    Freq_Control(i)=PLL_Phase_Part(i)+PLL_Freq_Part(i-1); 
-    PLL_Freq_Part(i)=Discriminator_Out(i)*C2+PLL_Freq_Part(i-1); 
-    NCO_Phase(i)=NCO_Phase(i-1)+Freq_Control(i); 
-end 
-%画图显示结果 
-figure 
-plot(Freq_Control(2:L)*Freq_Sample) 
-figure 
-plot(sin(NCO_Phase),'r') 
+    Signal_PLL(i)=Signal_Channel(i)*exp(-1j*mod(NCO_Phase(i-1),2*pi));   %得到环路滤波器前的相乘器的输入
+    I_PLL(i)=real(Signal_PLL(i));                                       %环路滤波器前的相乘器的I路输入信息数据
+    Q_PLL(i)=imag(Signal_PLL(i));                                       %环路滤波器前的相乘器的Q路输入信息数据
+    Discriminator_Out(i)=sign(I_PLL(i))*Q_PLL(i)/abs(Signal_PLL(i));    %鉴相器的输出误差电压信号
+    PLL_Phase_Part(i)=Discriminator_Out(i)*C1;                          %环路滤波器对鉴相器输出的误差电压信号处理后得到锁相环相位响应函数
+    Freq_Control(i)=PLL_Phase_Part(i)+PLL_Freq_Part(i-1);               %控制压控振荡器的输出信号频率
+    PLL_Freq_Part(i)=Discriminator_Out(i)*C2+PLL_Freq_Part(i-1);        %环路滤波器对鉴相器输出的误差电压信号处理后得到锁相环频率响应函数
+    NCO_Phase(i)=NCO_Phase(i-1)+Freq_Control(i);                        %压控振荡器进行相位调整
+end
+
+%% 可视化
+plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
 hold on 
-plot(imag(Carrier)) 
-figure 
-subplot(2,2,1) 
-plot(-PLL_Freq_Part(2:L)*Freq_Sample); 
-grid on; 
-title('锁相环频率响应曲线'); 
-axis([1 L -100 100]); 
-subplot(2,2,2) 
-plot(PLL_Phase_Part(2:L)*180/pi); 
-title('锁相环相位响应曲线'); 
-axis([1 L -2 2]); 
-grid on; 
-%设定显示范围 
+plot(real(Carrier))                     %发射载波
+legend('锁相环提取的载波','发射载波')
+
 Show_D=300; %起始位置 
-Show_U=900; %终止位置 
-Show_Length=Show_U-Show_D; 
-subplot(2,2,3) 
-plot(Signal_Channel(Show_D:Show_U),'*'); 
-title('进入锁相环的数据星座图'); 
-axis([-2 2 -2 2]); 
-grid on; 
-hold on; 
-subplot(2,2,3) 
-plot(Signal_PLL(Show_D:Show_U),'r*'); 
-grid on; 
-subplot(2,2,4) 
-plot(Signal_PLL(Show_D:Show_U),'r*'); 
-title('锁相环锁定及稳定后的数据星座图'); 
-axis([-2 2 -2 2]); 
-grid on; 
- 
-figure 
-%设定显示范围 
-Show_D=300; %起始位置 
-Show_U=350; %终止位置 
-Show_Length=Show_U-Show_D; 
-subplot(2,2,1) 
-plot(I_Data(Show_D:Show_U)); 
-grid on; 
-title('I路信息数据'); 
+Show_U=900; %终止位置
+Show_Length=Show_U-Show_D;
+
+plot(I_Data(Show_D:Show_U)); grid on; 
+title('I路信息数据(调制信号)'); 
 axis([1 Show_Length -2 2]); 
 subplot(2,2,2) 
-plot(Q_Data(Show_D:Show_U)); 
-grid on; 
+plot(Q_Data(Show_D:Show_U)); grid on; 
 title('Q路信息数据'); 
 axis([1 Show_Length -2 2]); 
 subplot(2,2,3) 
-plot(I_PLL(Show_D:Show_U)); 
-grid on; 
-title('锁相环输出I路信息数据'); 
+plot(I_PLL(Show_D:Show_U)); grid on; 
+title('锁相环输出I路信息数据(解调信号)'); 
 axis([1 Show_Length -2 2]); 
 subplot(2,2,4) 
-plot(Q_PLL(Show_D:Show_U)); 
-grid on; 
+plot(Q_PLL(Show_D:Show_U)); grid on; 
 title('锁相环输出Q路信息数据'); 
 axis([1 Show_Length -2 2]); 
