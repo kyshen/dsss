@@ -1,3 +1,5 @@
+tic
+
 m=(1/f_ca)*fs;
 delta_n=0;
 for i=1:floor(m)
@@ -19,5 +21,10 @@ for i=1:floor(m)
     if (G < 0)
         delta_n = delta_n+1;
     end
-    disp(i)
+    fprintf("正在进行早迟门伪码相位跟踪......[%d/%d]\n",i,floor(m))
 end
+
+fprintf("早迟门伪码相位跟踪完成!")
+toc
+fprintf("\n")
+pause(2)

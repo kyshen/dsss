@@ -1,3 +1,6 @@
+tic
+disp("正在进行Costas环载波跟踪......")
+
 fs4costas=3500e7;
 t4costas=0:1/fs4costas:time-1/fs4costas; % 时间序列
 L=length(t4costas);
@@ -36,6 +39,10 @@ for i=2:L
     NCO_Phase(i)=NCO_Phase(i-1)+Freq_Control(i);                        %压控振荡器进行相位调整
 end
 
+fprintf("载波跟踪已完成!")
+toc
+fprintf("\n")
+pause(2)
 %% 可视化
 % plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
 % hold on 

@@ -23,7 +23,7 @@ r_DS = awgn(s_DS,SNR); % 信道噪声
 
 FFT_catch; % 信号捕获
 
-n=floor(floor(catched_CAcode_shift(1))*(1/f_ca)*fs);
+n=floor(catched_CAcode_shift(1)*(1/f_ca)*fs);
 CAcode_R_after_catch=CAcode_x((1:N)+n);
 carrier_R_after_catch=A*cos(2*pi*(fc+catched_fd(1))*t);
 
@@ -40,3 +40,6 @@ r_1=filter(b1,a1,r_0);
 r_2=-r_1.*carrier_R_after_track*2; % 解调
 Datacode_out=filter(b2,a2,r_2);
 plot(Datacode_out)
+fprintf("FFT捕获结果:\t多普勒频移%dkHz    伪码相位偏移%d\n",catched_fd/1e3,catched_CAcode_shift)
+fprintf("Costas环跟踪结果:   (载波频率、相位已跟踪)\n")
+fprintf("早迟门跟踪结果：   伪码需平移%d个采样点以达到同步\n",delta_n)
