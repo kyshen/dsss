@@ -1,7 +1,6 @@
-function  delta_n = Early_Late_gate(k)  
+function  Early_Late_gate(k)  
     tic
     N_1=evalin('base','N_1');
-    n=evalin('base','n');
     fs=evalin('base','fs');
     f_ca=evalin('base','f_ca');
     CAcode_x=evalin('base','CAcode_x');
@@ -17,7 +16,7 @@ function  delta_n = Early_Late_gate(k)
         
         IE=sum(CAcode_T((1:N_1)+(k-1)*N_1).*CAcode_R_after_catch_E);
         IP=sum(CAcode_T((1:N_1)+(k-1)*N_1).*CAcode_R_after_catch_P);
-        IL=sum(CAcode_T((1:N_1)+(k-1)*N_1).*CAcode_R_after_catch_L);
+        IL=sum(CAcode_T(1,1:N_1).*CAcode_R_after_catch_L);
     
         G=(IE^2-IL^2)/(IE^2+IL^2);
         if (G == 0)
@@ -35,4 +34,5 @@ function  delta_n = Early_Late_gate(k)
     fprintf("早迟门伪码相位跟踪完成!")
     toc
     fprintf("\n")
+    pause(2)
 end

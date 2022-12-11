@@ -1,16 +1,19 @@
-clear,clc
+tic
+disp("正在进行Costas环载波跟踪......")
+
+fs4costas=600e7;
+t4costas=0:1/fs4costas:time1-1/fs4costas; % 时间序列
+L=length(t4costas);
+for k=1:N/N1
 %% 构造数字基带信号
-%L=10000;
-L=1e6;
-I_Data=(randi(2,L,1)-2)*2+1; 
+I_Data=sample(Datacode(1:N1),RB,fs4costas,time1)';
 Q_Data=zeros(L,1,1);
 Signal_Source=I_Data + 1j*Q_Data; 
 %% 载波信号 
-Freq_Sample=511.5e6;                       %采样率，Hz 
-Delta_Freq=157.542e6;                          %载波频率 
-Time_Sample=1/Freq_Sample;              %采样间隔
-Delta_Phase=rand(1)*2*pi;               %随机初相，rad 
-Carrier=exp(1j*(Delta_Freq*Time_Sample*(1:L)+Delta_Phase));      %构造载波信号
+Delta_Freq=fc+fd;                       %载波频率 
+% Delta_Phase=rand(1)*2*pi;               %随机初相，rad
+Delta_Phase=0;
+Carrier=exp(1i*(2*pi*Delta_Freq*t4costas+Delta_Phase));
 %% 调制处理 
 Signal_Channel=Signal_Source.*Carrier'; 
 %% 参数清零及初始化
@@ -27,6 +30,9 @@ C1=0.022013;                    %环路滤波器系数C1
 C2=0.00024722;                  %环路滤波器系数C2 
 %% 锁相环处理过程
 for i=2:L 
+    if (mod(i,L/200) == 0)
+        fprintf("正在进行Costas环载波跟踪......[%d/%d]\n",i/(L/200),200);
+    end
     Signal_PLL(i)=Signal_Channel(i)*exp(-1j*mod(NCO_Phase(i-1),2*pi));   %得到环路滤波器前的相乘器的输入
     I_PLL(i)=real(Signal_PLL(i));                                       %环路滤波器前的相乘器的I路输入信息数据
     Q_PLL(i)=imag(Signal_PLL(i));                                       %环路滤波器前的相乘器的Q路输入信息数据
@@ -36,12 +42,19 @@ for i=2:L
     PLL_Freq_Part(i)=Discriminator_Out(i)*C2+PLL_Freq_Part(i-1);        %环路滤波器对鉴相器输出的误差电压信号处理后得到锁相环频率响应函数
     NCO_Phase(i)=NCO_Phase(i-1)+Freq_Control(i);                        %压控振荡器进行相位调整
 end
+NCO_Phase=resample(NCO_Phase,N1,length(NCO_Phase));
 
+end
+
+fprintf("载波跟踪已完成!")
+toc
+fprintf("\n")
+pause(2)
 %% 可视化
-plot(cos(NCO_Phase(1:1000)),'b');grid on        %锁相环提取的载波
-hold on 
-plot(real(Carrier(1:1000)),'r')                     %发射载波
-legend('锁相环提取的载波','发射载波')
+% plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
+% hold on 
+% plot(real(Carrier),'b')                     %发射载波
+% legend('锁相环提取的载波','发射载波')
 
 % Show_D=300; %起始位置 
 % Show_U=900; %终止位置
