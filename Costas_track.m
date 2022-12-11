@@ -1,8 +1,8 @@
 tic
 disp("正在进行Costas环载波跟踪......")
 
-fs4costas=3500e7;
-t4costas=0:1/fs4costas:time-1/fs4costas; % 时间序列
+fs4costas=600e7;
+t4costas=0:1/fs4costas:time1-1/fs4costas; % 时间序列
 L=length(t4costas);
 %% 构造数字基带信号
 I_Data=(randi(2,L,1)-2)*2+1; 
@@ -29,6 +29,9 @@ C1=0.022013;                    %环路滤波器系数C1
 C2=0.00024722;                  %环路滤波器系数C2 
 %% 锁相环处理过程
 for i=2:L 
+    if (mod(i,L/200) == 0)
+        fprintf("正在进行Costas环载波跟踪......[%d/%d]\n",i/(L/200),200);
+    end
     Signal_PLL(i)=Signal_Channel(i)*exp(-1j*mod(NCO_Phase(i-1),2*pi));   %得到环路滤波器前的相乘器的输入
     I_PLL(i)=real(Signal_PLL(i));                                       %环路滤波器前的相乘器的I路输入信息数据
     Q_PLL(i)=imag(Signal_PLL(i));                                       %环路滤波器前的相乘器的Q路输入信息数据
