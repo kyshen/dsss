@@ -1,12 +1,12 @@
 %% 采样
-time=2e-3; % 采样时间
+time=3e-3; % 采样时间
 fs=400e6; % 采样速率
 N=fs*time; % 采样点数
 
 time_1=1e-3; % 一个数据码元的采样时间
 N_1=fs*time_1; % 一个数据码元内的采样点数
 %% costas
-fs4costas=600e7; % costas环的采样速率
+fs4costas=280e7; % costas环的采样速率
 L=time_1*fs4costas; % costats环一个数据码元内的采样点数
 %% 信息码
 RB=1e3; % 码元传输速率
@@ -16,11 +16,11 @@ f_ca=1.023e6; % ca码频率
 %% 载波
 A=1; % 载波幅度
 fc=157.542e6; % 载波频率
-phi_limit=pi/5; % 最大随机初相
+phi=rand(1)*2*pi; % 随机初相
 %% 信道
 SNR = 0; % dB
-fd_limit=10e3; % 多普勒频偏
-time_delay_limit=1000/1.023e6; %发送端经过时延到达的是c(t-τ)
+fd=8.176e3; % 多普勒频偏
+time_delay = 118.121/1.023e6; %发送端经过时延到达的是c(t-τ)
 %% 滤波器
 Wp1=[157.442e6 157.642e6]/(fs/2);
 Ws1=[154e6 161e6]/(fs/2);

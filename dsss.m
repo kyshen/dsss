@@ -3,15 +3,22 @@ clear,clc
 hold off
 close all
 dsss_settings
+%% 产生信息码、C/A码
 data=sign(rand(1,data_length)-0.5); % 信息码，正负1
 ca=CAcodeGenerator([3,8]);
 ca=2*ca-1;
 
 Datacode_out=zeros(1,N);
-
+Temp=zeros(1,N/N_1);
+%% dsss
 for i=1:N/N_1
-%% 产生信息码、C/A码
 tic
+    if (i==1 || mod(i,10)==0)
+        phi=phi_limit*rand; % 随机初相
+        fd=fd_limit*rand; % 随机多普勒频移
+        time_delay=time_delay_limit*rand; % 随机传输延迟
+    end
+
     t=((i-1)*N_1:i*N_1-1)/fs;
     t4costas=((i-1)*L:i*L-1)/fs4costas;
     idx=(1:N_1)+(i-1)*N_1;
@@ -21,22 +28,23 @@ tic
     CAcode_x=sample(ca,f_ca,fs,2*time_1);
     CAcode_T=CAcode_x((1:N_1)+floor(time_delay*fs));
     CAcode_R=CAcode_x(1:N_1);
-    
-    %% costas
-    Datacode4costas=sample(data(i),RB,fs4costas,time_1);
-    CAcode_x4costas=sample(ca,f_ca,fs4costas,2*time_1);
-    CAcode_T4costas=CAcode_x4costas((1:L)+floor(time_delay*fs4costas));
-    carrier_T4costas=A*exp(1i*(2*pi*(fc+fd)*t4costas));
-    s_04costas=Datacode4costas.*carrier_T4costas;
-    s_DS4costats=s_04costas.*CAcode_T4costas;
-    r_DS4costas=awgn(s_DS4costats,SNR);
+
     %% 载波
-    carrier_T=A*cos(2*pi*(fc+fd)*t); %随机初相位
+    carrier_T=A*cos(2*pi*(fc+fd)*t+phi); %随机初相位
     carrier_R=A*cos(2*pi*fc*t); % 
     %% dsss
     s_0=Datacode.*carrier_T; % 调制载波
     s_DS=s_0.*CAcode_T; % 扩频
     r_DS = awgn(s_DS,SNR); % 信道噪声
+    
+    %% costas
+    Datacode4costas=sample(data(i),RB,fs4costas,time_1);
+    CAcode_x4costas=sample(ca,f_ca,fs4costas,2*time_1);
+    CAcode_T4costas=CAcode_x4costas((1:L)+floor(time_delay*fs4costas));
+    carrier_T4costas=A*exp(1i*(2*pi*(fc+fd)*t4costas)+phi);
+    s_04costas=Datacode4costas.*carrier_T4costas;
+    s_DS4costats=s_04costas.*CAcode_T4costas;
+    r_DS4costas=awgn(s_DS4costats,SNR);
 
     NCO_Phase = Costas_track(); % 信号跟踪
     carrier_R_after_track=cos(NCO_Phase)';
@@ -46,10 +54,12 @@ tic
         carrier_R_after_track=-carrier_R_after_track;
     end
 
-    catched_CAcode_shift = FFT_catch_1(); % 信号捕获
-    n=floor(catched_CAcode_shift(1)*(1/f_ca)*fs);
-    delta_n = Early_Late_gate(); % 早迟门
-    CAcode_R_after_track=CAcode_x((1:N_1)+n+delta_n);
+    if (i==1 || mod(i,10)==0)
+        catched_CAcode_shift = FFT_catch_1(); % 信号捕获
+        n=floor(catched_CAcode_shift(1)*(1/f_ca)*fs);
+        delta_n = Early_Late_gate(); % 早迟门
+        CAcode_R_after_track=CAcode_x((1:N_1)+n+delta_n);
+    end
 
     r_0=r_DS((1:N_1)).*CAcode_R_after_track; % 解扩
     r_1=filter(b1,a1,r_0);
@@ -58,6 +68,10 @@ tic
     Datacode_out(idx)=Datacode_out_1;
     disp(i)
     toc
+
+    Temp(i)=catched_CAcode_shift;
 end
 figure
-plot(Datacode_out),hold on
+plot(Datacode_out(1:1000:end))
+data_out=Datacode_out(N_1/2:N_1:end);
+data_out=sign(data_out);
