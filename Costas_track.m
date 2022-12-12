@@ -29,4 +29,5 @@ function NCO_Phase = Costas_track(k)
         NCO_Phase(i)=NCO_Phase(i-1)+Freq_Control(i);                        %压控振荡器进行相位调整
     end
     NCO_Phase=resample(NCO_Phase,N_1,length(NCO_Phase));
+    
 end

@@ -1,7 +1,6 @@
 function [catched_fd, catched_CAcode_shift] = FFT_catch_2(k)
     tic
     N_1=evalin('base','N_1');
-    fd_search_range=evalin('base','fd_search_range');
     A=evalin('base','A');
     fc=evalin('base','fc');
     fs=evalin('base','fs');
@@ -9,6 +8,8 @@ function [catched_fd, catched_CAcode_shift] = FFT_catch_2(k)
     t_1=evalin('base','t_1');
     r_DS=evalin('base','r_DS');
     CAcode_R=evalin('base','CAcode_R');
+
+    fd_search_range=-10e4:1e3:10e4;
 
     CAcode_R_1=CAcode_R((1:N_1)+(k-1)*N_1);
     r_DS_1=r_DS((1:N_1)+(k-1)*N_1);

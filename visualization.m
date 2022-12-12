@@ -1,3 +1,5 @@
+%freqz(b1,a1,[4096],fs); % 查看设计滤波器的曲线
+%freqz(b2,a2,[],10e3);
 %% 可视化
 % plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
 % hold on 
@@ -32,3 +34,14 @@ fprintf("载波跟踪结果:\t\t(载波频率,相位已跟踪)\n")
 fprintf("码元跟踪结果:\t\t伪码需平移%d个采样点以达到同步\n",delta_n)
 
 save track_file.mat CAcode_R_after_track carrier_R_after_track;
+
+
+figure
+plot(carrier_T)
+hold on
+plot(carrier_R_after_track)
+
+figure
+plot(CAcode_T)
+hold on
+plot(CAcode_R_after_track)
