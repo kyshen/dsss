@@ -1,15 +1,14 @@
 %% 采样
-time=5e-3; % 采样时间
+time=1000e-3; % 采样时间
 fs=400e6; % 采样速率
 N=fs*time; % 采样点数
-t=0:1/fs:time-1/fs; % 时间序列
+% t=0:1/fs:time-1/fs; % 时间序列
 
 time_1=1e-3; % 一个数据码元的采样时间
 N_1=fs*time_1; % 一个数据码元内的采样点数
-t_1=0:1/fs:time_1-1/fs; % 一个码元的时间序列
 %% costas
 fs4costas=600e7; % costas环的采样速率
-t4costas=0:1/fs4costas:time-1/fs4costas; % costas环的时间序列
+% t4costas=0:1/fs4costas:time-1/fs4costas; % costas环的时间序列
 L=time_1*fs4costas; % costats环一个数据码元内的采样点数
 %% 信息码
 RB=1e3; % 码元传输速率

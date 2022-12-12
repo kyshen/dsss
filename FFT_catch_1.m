@@ -1,4 +1,4 @@
-function catched_CAcode_shift = FFT_catch_1(k)
+function catched_CAcode_shift = FFT_catch_1()
   
     N_1=evalin('base','N_1');
     fs=evalin('base','fs');
@@ -7,10 +7,9 @@ function catched_CAcode_shift = FFT_catch_1(k)
     CAcode_R=evalin('base','CAcode_R');
     carrier_R_after_track=evalin('base','carrier_R_after_track');
 
-    CAcode_R_1=CAcode_R((1:N_1)+(k-1)*N_1);
-    r_DS_1=r_DS((1:N_1)+(k-1)*N_1);
+    r_DS_1=r_DS;
     
-    CAcode_R_FFT_conj_1=conj(fft(CAcode_R_1));
+    CAcode_R_FFT_conj_1=conj(fft(CAcode_R));
     
     r_2_1=r_DS_1.*carrier_R_after_track;
     r_2_FFT_1=fft(r_2_1);

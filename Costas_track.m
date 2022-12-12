@@ -1,10 +1,10 @@
-function NCO_Phase = Costas_track(k)
+function NCO_Phase = Costas_track()
     N_1=evalin('base','N_1');
     L=evalin('base','L');
     r_DS4costas=evalin('base','r_DS4costas');
 
     %% 调制处理 
-    Signal_Channel=r_DS4costas((1:L)+(k-1)*L);
+    Signal_Channel=r_DS4costas;
     %% 参数清零及初始化
     Signal_PLL=zeros(L,1);                  %锁相环锁定及稳定后的数据
     NCO_Phase = zeros(L,1);                 %锁定的相位
