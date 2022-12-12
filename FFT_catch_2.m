@@ -1,4 +1,4 @@
-function [catched_fd, catched_CAcode_shift] = FFT_catch(k)
+function [catched_fd, catched_CAcode_shift] = FFT_catch_2(k)
     tic
     N_1=evalin('base','N_1');
     fd_search_range=evalin('base','fd_search_range');

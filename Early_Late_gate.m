@@ -1,12 +1,10 @@
 function  delta_n = Early_Late_gate(k)  
-    tic
     N_1=evalin('base','N_1');
     n=evalin('base','n');
     fs=evalin('base','fs');
     f_ca=evalin('base','f_ca');
     CAcode_x=evalin('base','CAcode_x');
     CAcode_T=evalin('base','CAcode_T');
-    
     
     m=(1/f_ca)*fs;
     delta_n=0;
@@ -29,10 +27,6 @@ function  delta_n = Early_Late_gate(k)
         if (G < 0)
             delta_n = delta_n+1;
         end
-        fprintf("正在进行早迟门伪码相位跟踪......[%d/%d]\n",i,floor(m))
     end
     
-    fprintf("早迟门伪码相位跟踪完成!")
-    toc
-    fprintf("\n")
 end
