@@ -13,9 +13,9 @@ Temp=zeros(1,N/N_1);
 %% dsss
 for i=1:N/N_1
 tic
-    if (i==1 || mod(i,10)==0)
-        phi=phi_limit*rand; % 随机初相
-        fd=fd_limit*rand; % 随机多普勒频移
+    if (i==1 || mod(i,2)==0)
+        phi=2*pi*rand; % 随机初相
+        fd=10e3*rand; % 随机多普勒频移
         time_delay=time_delay_limit*rand; % 随机传输延迟
     end
 
@@ -41,7 +41,7 @@ tic
     Datacode4costas=sample(data(i),RB,fs4costas,time_1);
     CAcode_x4costas=sample(ca,f_ca,fs4costas,2*time_1);
     CAcode_T4costas=CAcode_x4costas((1:L)+floor(time_delay*fs4costas));
-    carrier_T4costas=A*exp(1i*(2*pi*(fc+fd)*t4costas)+phi);
+    carrier_T4costas=A*exp(1i*(2*pi*(fc+fd)*t4costas+phi));
     s_04costas=Datacode4costas.*carrier_T4costas;
     s_DS4costats=s_04costas.*CAcode_T4costas;
     r_DS4costas=awgn(s_DS4costats,SNR);
@@ -54,7 +54,7 @@ tic
         carrier_R_after_track=-carrier_R_after_track;
     end
 
-    if (i==1 || mod(i,10)==0)
+    if (i==1 || mod(i,2)==0)
         catched_CAcode_shift = FFT_catch_1(); % 信号捕获
         n=floor(catched_CAcode_shift(1)*(1/f_ca)*fs);
         delta_n = Early_Late_gate(); % 早迟门
@@ -75,3 +75,4 @@ figure
 plot(Datacode_out(1:1000:end))
 data_out=Datacode_out(N_1/2:N_1:end);
 data_out=sign(data_out);
+find(data~=data_out)
