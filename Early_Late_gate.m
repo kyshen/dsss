@@ -1,4 +1,6 @@
-function  delta_n = Early_Late_gate()  
+function  delta_n = Early_Late_gate()
+%早迟门：用于码元相位精同步
+
     N_1=evalin('base','N_1');
     n=evalin('base','n');
     fs=evalin('base','fs');

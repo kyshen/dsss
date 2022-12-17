@@ -1,5 +1,6 @@
-function catched_CAcode_shift = FFT_catch_1()
-  
+function catched_CAcode_shift = FFT_catch()
+% FFT快速捕获：用于码元相位粗同步
+
     N_1=evalin('base','N_1');
     fs=evalin('base','fs');
     f_ca=evalin('base','f_ca');

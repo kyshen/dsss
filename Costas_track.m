@@ -1,4 +1,6 @@
 function NCO_Phase = Costas_track()
+%科斯塔斯环：用于载波同步
+
     N_1=evalin('base','N_1');
     L=evalin('base','L');
     r_DS4costas=evalin('base','r_DS4costas');

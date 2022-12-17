@@ -11,7 +11,7 @@ ca=2*ca-1; % 将ca码变为正负1
 
 %% dsss
 
-Datacode_out=zeros(1,N); % 接收端解调得出的信息码
+Datacode_out=zeros(1,N); % 接收端判决得出的信息码
 
 for i=1:N/N_1
 % 循环次数为传输的信息码元个数，每次循环处理一个信息码元
@@ -64,16 +64,16 @@ tic
         % 由于前面每十个码元更新一次ca码和载波的不同步参数
         % 所以这里每十个码元做一次信号捕获和早迟门同步
 
-        catched_CAcode_shift = FFT_catch(); % 信号捕获
-        n=floor(catched_CAcode_shift*(1/f_ca)*fs); % 粗同步得到的需要移动的抽样点个数
-        delta_n = Early_Late_gate(); % 早迟门，获取由精同步得到的需要移动的抽样点个数
-        CAcode_R_after_track=CAcode_x((1:N_1)+n+delta_n); % 得到同步ca码
+        catched_CAcode_shift = FFT_catch(); % 
+        n=floor(catched_CAcode_shift(1)*(1/f_ca)*fs);
+        delta_n = Early_Late_gate(); % 早迟门
+        CAcode_R_after_track=CAcode_x((1:N_1)+n+delta_n);
     end
 
     r_0=r_DS((1:N_1)).*CAcode_R_after_track; % 解扩
-    r_1=filter(b1,a1,r_0); % 解调前带通滤波
+    r_1=filter(b1,a1,r_0);
     r_2=r_1.*carrier_R_after_track*2; % 解调
-    Datacode_out_1=filter(b2,a2,r_2); % 解调后低通滤波
+    Datacode_out_1=filter(b2,a2,r_2);
     Datacode_out((1:N_1)+(i-1)*N_1)=Datacode_out_1;
     disp(i)
     toc

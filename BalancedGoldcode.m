@@ -1,6 +1,6 @@
 function BGcode = BalancedGoldcode(C1,C2)
 %BalancedGoldcode 获取平衡Gold码
-%   输入优选对所对应的本原多项式(见bestm)
+%   输入优选对所对应的本原多项式
 %   本函数根据不同的寄存器初始状态寻找平衡Gold码
 BGcode=[];
 n=length(C1)-1;
