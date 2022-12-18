@@ -1,47 +1,37 @@
-%freqz(b1,a1,[4096],fs); % 查看设计滤波器的曲线
-%freqz(b2,a2,[],10e3);
-%% 可视化
-% plot(cos(NCO_Phase),'r');grid on        %锁相环提取的载波
-% hold on 
-% plot(real(Carrier),'b')                     %发射载波
-% legend('锁相环提取的载波','发射载波')
+%% 查看设计的滤波器的曲线
+figure, freqz(b1,a1,4096,fs);
+title("带通滤波器幅频特性曲线")
+figure, freqz(b2,a2,[],10e3);
+title("低通滤波器幅频特性曲线")
 
-% Show_D=300; %起始位置 
-% Show_U=900; %终止位置
-% Show_Length=Show_U-Show_D;
-% 
-% plot(I_Data(Show_D:Show_U)); grid on; 
-% title('I路信息数据(调制信号)'); 
-% axis([1 Show_Length -2 2]); 
-% subplot(2,2,2) 
-% plot(Q_Data(Show_D:Show_U)); grid on; 
-% title('Q路信息数据'); 
-% axis([1 Show_Length -2 2]); 
-% subplot(2,2,3) 
-% plot(I_PLL(Show_D:Show_U)); grid on; 
-% title('锁相环输出I路信息数据(解调信号)'); 
-% axis([1 Show_Length -2 2]); 
-% subplot(2,2,4) 
-% plot(Q_PLL(Show_D:Show_U)); grid on; 
-% title('锁相环输出Q路信息数据'); 
-% axis([1 Show_Length -2 2]); 
+%% 载波同步曲线
+figure
+plot(cos(NCO_Phase(1:1000:end)),'r'); % 锁相环提取的载波
+hold on
+title("载波同步")
+plot(real(carrier_T(1:1000:end)),'b') % 发射载波
+legend('锁相环提取的载波','发射载波')
+hold off
+
+%% C/A码同步
+figure
+subplot(3,1,1)
+plot(CAcode_T(1:10:end),'r')
+title("发送端C/A码")
+legend('发送端C/A码')
+subplot(3,1,2)
+plot(CAcode_R_after_catch(1:10:end),'b')
+title('接收端粗同步C/A码')
+legend('接收端粗同步C/A码')
+subplot(3,1,3)
+plot(CAcode_R_after_track(1:10:end),'k')
+title('接收端精同步C/A码')
+legend('接收端精同步C/A码')
 
 %% 结果
-plot(Datacode_out)
-
-fprintf("粗捕获结果:\t\t多普勒频移%dkHz\t伪码相位偏移%d\n",catched_fd/1e3,catched_CAcode_shift)
-fprintf("载波跟踪结果:\t\t(载波频率,相位已跟踪)\n")
-fprintf("码元跟踪结果:\t\t伪码需平移%d个采样点以达到同步\n",delta_n)
-
-save track_file.mat CAcode_R_after_track carrier_R_after_track;
-
-
 figure
-plot(carrier_T)
+title("用同步C/A码、同步载波解扩解调后恢复原始信息码")
+plot(Datacode_out(1:1000:end)) % 每隔1000个点plot一下，避免卡慢
 hold on
-plot(carrier_R_after_track)
-
-figure
-plot(CAcode_T)
-hold on
-plot(CAcode_R_after_track)
+plot(Datacode(1:1000:end))
+legend('还原后的信息码','原始信息码')

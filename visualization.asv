@@ -1,0 +1,21 @@
+%% 查看设计的滤波器的曲线
+figure, freqz(b1,a1,4096,fs);
+title("带通滤波器幅频特性曲线")
+figure, freqz(b2,a2,[],10e3);
+title("低通滤波器幅频特性曲线")
+
+%% 载波同步曲线
+figure
+plot(cos(NCO_Phase(1:1000:end)),'r'); % 锁相环提取的载波
+hold on
+title("载波同步")
+plot(real(carrier_T(1:1000:end)),'b') % 发射载波
+legend('锁相环提取的载波','发射载波')
+hold off
+
+%% C/A码同步
+figure
+subplot(2,2,1)
+plot(CAcode_T(1:1000:end),'r')
+hold on
+plot()
